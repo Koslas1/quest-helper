@@ -415,9 +415,13 @@ public class QuestHelperPlugin extends Plugin
 			}
 			System.out.println(inv);
 		}
-		else if (commandExecuted.getCommand().equals("import-quest"))
+		else if (commandExecuted.getCommand().equals("import-helper"))
 		{
 			questHelperSharingManager.promptForImport();
+		}
+		else if (commandExecuted.getCommand().equals("helper-editor"))
+		{
+			panel.toggleQuestCreator();
 		}
 	}
 

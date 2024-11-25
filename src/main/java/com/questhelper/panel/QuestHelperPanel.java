@@ -153,37 +153,6 @@ public class QuestHelperPanel extends PluginPanel
 		final JPanel viewControls = new JPanel(new GridLayout(1, 3, 10, 0));
 		viewControls.setBackground(ColorScheme.DARK_GRAY_COLOR);
 
-		// Make Helper Button
-		JButton makeHelperButton = new JButton();
-		SwingUtil.removeButtonDecorations(makeHelperButton);
-		makeHelperButton.setIcon(SETTINGS_ICON);
-		makeHelperButton.setToolTipText("Make a new helper");
-		makeHelperButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		makeHelperButton.setUI(new BasicButtonUI());
-		makeHelperButton.addActionListener((ev) -> {
-			toggleQuestCreator();
-		});
-		makeHelperButton.addMouseListener(new java.awt.event.MouseAdapter()
-		{
-			public void mouseEntered(java.awt.event.MouseEvent evt)
-			{
-				makeHelperButton.setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
-			}
-
-			public void mouseExited(java.awt.event.MouseEvent evt)
-			{
-				if (settingsPanelActive)
-				{
-					makeHelperButton.setBackground(ColorScheme.LIGHT_GRAY_COLOR);
-				}
-				else
-				{
-					makeHelperButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-				}
-			}
-		});
-		viewControls.add(makeHelperButton);
-
 		// Settings
 		JButton settingsBtn = new JButton();
 		SwingUtil.removeButtonDecorations(settingsBtn);
@@ -192,7 +161,17 @@ public class QuestHelperPanel extends PluginPanel
 		settingsBtn.setBackground(ColorScheme.DARK_GRAY_COLOR);
 		settingsBtn.setUI(new BasicButtonUI());
 		settingsBtn.addActionListener((ev) -> {
-			toggleQuestCreator();
+			assistLevelPanel.rebuild(null, configManager, this);
+			if (settingsPanelActive)
+			{
+				settingsBtn.setBackground(ColorScheme.LIGHT_GRAY_COLOR);
+				deactivateSettings();
+			}
+			else
+			{
+				settingsBtn.setBackground(ColorScheme.DARK_GRAY_COLOR);
+				activateSettings();
+			}
 		});
 		settingsBtn.addMouseListener(new java.awt.event.MouseAdapter()
 		{
@@ -343,9 +322,6 @@ public class QuestHelperPanel extends PluginPanel
 		JPanel orderPanel = makeDropdownPanel(orderDropdown, "Ordering");
 		orderPanel.setPreferredSize(new Dimension(PANEL_WIDTH, DROPDOWN_HEIGHT));
 
-		JPanel assistanceToggles = new JPanel();
-
-
 		// Skill filtering
 		SkillFilterPanel skillFilterPanel = new SkillFilterPanel(questHelperPlugin.skillIconManager, questHelperPlugin.getConfigManager());
 		skillFilterPanel.setVisible(false);
@@ -454,7 +430,7 @@ public class QuestHelperPanel extends PluginPanel
 		revalidate();
 	}
 
-	private void toggleQuestCreator()
+	public void toggleQuestCreator()
 	{
 		creatorFrame.setVisible(!creatorFrame.isVisible());
 	}
