@@ -24,7 +24,9 @@
  */
 package com.questhelper.panel;
 
+import com.google.gson.Gson;
 import com.questhelper.managers.QuestManager;
+import com.questhelper.panel.questmaking.QuestCreatorFrame;
 import com.questhelper.panel.skillfiltering.SkillFilterPanel;
 import com.questhelper.tools.Icon;
 import com.questhelper.QuestHelperConfig;
@@ -86,11 +88,15 @@ public class QuestHelperPanel extends PluginPanel
 	private boolean settingsPanelActive = false;
 	public boolean questActive = false;
 
+	private JButton createQuestButton;
+
 	private final ArrayList<QuestSelectPanel> questSelectPanels = new ArrayList<>();
 
 	QuestHelperPlugin questHelperPlugin;
 
 	QuestManager questManager;
+
+	Gson gson;
 
 	private static final ImageIcon DISCORD_ICON;
 	private static final ImageIcon GITHUB_ICON;
@@ -109,13 +115,14 @@ public class QuestHelperPanel extends PluginPanel
 		EXPANDED_ICON = Icon.EXPANDED.getIcon();
 	}
 
-	public QuestHelperPanel(QuestHelperPlugin questHelperPlugin, QuestManager questManager, ConfigManager configManager)
+	public QuestHelperPanel(QuestHelperPlugin questHelperPlugin, QuestManager questManager, ConfigManager configManager, Gson gson)
 	{
 		super(false);
 
 		this.questHelperPlugin = questHelperPlugin;
 		this.questManager = questManager;
 		this.configManager = configManager;
+		this.gson = gson;
 
 		setBackground(ColorScheme.DARK_GRAY_COLOR);
 		setLayout(new BorderLayout());
@@ -130,6 +137,11 @@ public class QuestHelperPanel extends PluginPanel
 		title.setForeground(Color.WHITE);
 		titlePanel.add(title, BorderLayout.WEST);
 
+		createQuestButton = new JButton("Create New Quest");
+		createQuestButton.addActionListener(e -> openQuestCreator());
+		titlePanel.add(createQuestButton, BorderLayout.EAST);
+
+
 		// Options
 		final JPanel viewControls = new JPanel(new GridLayout(1, 3, 10, 0));
 		viewControls.setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -143,17 +155,18 @@ public class QuestHelperPanel extends PluginPanel
 		settingsBtn.setBackground(ColorScheme.DARK_GRAY_COLOR);
 		settingsBtn.setUI(new BasicButtonUI());
 		settingsBtn.addActionListener((ev) -> {
-			assistLevelPanel.rebuild(null, configManager, this);
-			if (settingsPanelActive)
-			{
-				settingsBtn.setBackground(ColorScheme.LIGHT_GRAY_COLOR);
-				deactivateSettings();
-			}
-			else
-			{
-				settingsBtn.setBackground(ColorScheme.DARK_GRAY_COLOR);
-				activateSettings();
-			}
+			openQuestCreator();
+//			assistLevelPanel.rebuild(null, configManager, this);
+//			if (settingsPanelActive)
+//			{
+//				settingsBtn.setBackground(ColorScheme.LIGHT_GRAY_COLOR);
+//				deactivateSettings();
+//			}
+//			else
+//			{
+//				settingsBtn.setBackground(ColorScheme.DARK_GRAY_COLOR);
+//				activateSettings();
+//			}
 		});
 		settingsBtn.addMouseListener(new java.awt.event.MouseAdapter()
 		{
@@ -413,6 +426,12 @@ public class QuestHelperPanel extends PluginPanel
 			scrollableContainer.setViewportView(questOverviewWrapper);
 		}
 		revalidate();
+	}
+
+	private void openQuestCreator()
+	{
+		QuestCreatorFrame creatorFrame = new QuestCreatorFrame(gson);
+		creatorFrame.setVisible(true);
 	}
 
 	private JComboBox<Enum> makeNewDropdown(Enum[] values, String key)
